@@ -1,13 +1,14 @@
-|                benchmark | size | area_after | depth | delay_after | multioutput | runtime |  cec |
-| fma_share.comb_circt.aig | 1392 |     147.14 |    36 |      410.94 |          12 |    0.35 | true |
-| fma_share.comb_yosys.aig | 1148 |     107.77 |    41 |      445.40 |          21 |    0.24 | true |
-| fmaa.comb_circt.aig | 4403 |     344.99 |    52 |      577.84 |         124 |    0.92 | true |
-| fmaa.comb_yosys.aig | 5236 |     491.23 |    48 |      539.42 |         180 |    1.21 | true |
-| fma.comb_circt.aig | 2506 |     213.89 |    46 |      506.65 |          91 |    0.51 | true |
-| fma.comb_yosys.aig | 2498 |     227.68 |    42 |      472.14 |          81 |    0.49 | true |
-| blend.comb_circt.aig |  677 |      69.45 |    39 |      441.56 |           5 |    0.16 | true |
-| blend.comb_yosys.aig |  701 |      53.52 |    37 |      407.85 |          24 |    0.16 | true |
-| add_three.comb_circt.aig |   57 |       4.67 |    11 |      132.85 |           1 |    0.01 | true |
-| add_three.comb_yosys.aig |   56 |       5.70 |    11 |      133.72 |           0 |    0.01 | true |
-| dot_product.comb_circt.aig |  258 |      29.67 |    26 |      300.22 |           3 |    0.05 | true |
-| dot_product.comb_yosys.aig |  259 |      22.43 |    26 |      292.37 |           8 |    0.05 | true |
+| benchmark                | size  | area_after | depth | delay_after | multioutput | runtime | cec  |
+|--------------------------|-------|------------|-------|-------------|-------------|---------|------|
+| fma_share.comb_circt.aig |  2910 |     265.17 |    44 |      502.29 |          49 |    0.65 | true |
+| fma_share.comb_yosys.aig |  2771 |     268.95 |    48 |      534.72 |          66 |    0.58 | true |
+| fmaa.comb_circt.aig      |  3545 |     349.47 |    39 |      445.87 |          76 |    0.92 | true |
+| fmaa.comb_yosys.aig      |  3489 |     297.87 |    44 |      497.98 |         148 |    0.83 | true |
+| fma.comb_circt.aig       |  2574 |     241.84 |    39 |      430.29 |          50 |    0.54 | true |
+| fma.comb_yosys.aig       |  2498 |     227.68 |    42 |      472.14 |          81 |    0.50 | true |
+| blend.comb_circt.aig     |  4589 |     361.08 |    57 |      616.96 |         186 |    0.93 | true |
+| blend.comb_yosys.aig     |  5175 |     397.19 |    56 |      614.74 |         214 |    1.16 | true |
+| add_three.comb_circt.aig |   294 |      25.75 |    17 |      202.57 |          11 |    0.05 | true |
+| add_three.comb_yosys.aig |   281 |      21.67 |    19 |      223.86 |          12 |    0.05 | true |
+| dot_product.comb_circt.aig|  4755 |     421.53 |    52 |      580.59 |         122 |    0.99 | true |
+| dot_product.comb_yosys.aig|  4948 |     421.54 |    50 |      557.33 |         151 |    1.03 | true |
