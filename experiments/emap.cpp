@@ -45,8 +45,17 @@
 
 #include <experiments.hpp>
 
-int main()
+int main( int argc, char* argv[] )
 {
+  if ( argc < 2 )
+  {
+    fmt::print( "Usage: {} <aiger_file>\n", argv[0] );
+    return 1;
+  }
+
+  std::string benchmark_file = argv[1];
+  std::string benchmark = benchmark_file;
+
   using namespace experiments;
   using namespace mockturtle;
 
@@ -54,8 +63,8 @@ int main()
       "emap", "benchmark", "size", "area_after", "depth", "delay_after", "multioutput", "runtime", "cec" );
 
   /* library to map to technology */
-  fmt::print( "[i] processing technology library\n" );
-  std::string library = "multioutput";
+  std::string library = "multioutput"; // or "asap7"
+  fmt::print( "[i] processing technology library `{}`\n", library );
   std::vector<gate> gates;
   std::ifstream in( cell_libraries_path( library ) );
 
@@ -69,43 +78,41 @@ int main()
   tps.verbose = true;
   tech_library<9> tech_lib( gates, tps );
 
-  for ( auto const& benchmark : epfl_benchmarks() )
+  fmt::print( "[i] processing {}\n", benchmark );
+
+  names_view<aig_network> aig;
+  if ( lorina::read_aiger( benchmark_file, aiger_reader( aig ) ) != lorina::return_code::success )
   {
-    fmt::print( "[i] processing {}\n", benchmark );
-
-    names_view<aig_network> aig;
-    if ( lorina::read_aiger( benchmark_path( benchmark ), aiger_reader( aig ) ) != lorina::return_code::success )
-    {
-      continue;
-    }
-
-    /* remove structural redundancies */
-    aig_balancing_params bps;
-    bps.minimize_levels = false;
-    bps.fast_mode = true;
-    aig_balance( aig, bps );
-
-    const uint32_t size_before = aig.num_gates();
-    const uint32_t depth_before = depth_view( aig ).depth();
-
-    emap_params ps;
-    ps.matching_mode = emap_params::hybrid;
-    ps.area_oriented_mapping = false;
-    ps.map_multioutput = true;
-    ps.relax_required = 0;
-    emap_stats st;
-    cell_view<block_network> res = emap<9>( aig, tech_lib, ps, &st );
-
-    names_view res_names{ res };
-    restore_network_name( aig, res_names );
-    restore_pio_names_by_order( aig, res_names );
-    const auto cec = benchmark == "hyp" ? true : abc_cec_mapped_cell( res_names, benchmark, library );
-
-    /* write verilog netlist */
-    // write_verilog_with_cell( res_names, benchmark + "_mapped.v" );
-
-    exp( benchmark, size_before, res.compute_area(), depth_before, res.compute_worst_delay(), st.multioutput_gates, to_seconds( st.time_total ), cec );
+    fmt::print( "[e] failed to read AIGER file {}\n", benchmark_file );
+    return 1;
   }
+
+  /* remove structural redundancies */
+  aig_balancing_params bps;
+  bps.minimize_levels = false;
+  bps.fast_mode = true;
+  aig_balance( aig, bps );
+
+  const uint32_t size_before = aig.num_gates();
+  const uint32_t depth_before = depth_view( aig ).depth();
+
+  emap_params ps;
+  ps.matching_mode = emap_params::hybrid;
+  ps.area_oriented_mapping = false;
+  ps.map_multioutput = true;
+  ps.relax_required = 0;
+  emap_stats st;
+  cell_view<block_network> res = emap<9>( aig, tech_lib, ps, &st );
+
+  names_view res_names{ res };
+  restore_network_name( aig, res_names );
+  restore_pio_names_by_order( aig, res_names );
+  const auto cec = abc_cec_mapped_cell( res_names, benchmark_file, library );
+
+  /* write verilog netlist */
+  write_verilog_with_cell( res_names, benchmark + "_mapped.v" );
+
+  exp( benchmark, size_before, res.compute_area(), depth_before, res.compute_worst_delay(), st.multioutput_gates, to_seconds( st.time_total ), cec );
 
   exp.save();
   exp.table();
